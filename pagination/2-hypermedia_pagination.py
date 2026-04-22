@@ -2,27 +2,32 @@
 """
 Module for hypermedia pagination with Server class.
 """
-
 import csv
 import math
 from typing import List, Dict
 
+
 def index_range(page: int, page_size: int) -> tuple:
     """
-    Calculate start and end index for a given pagination page.
+    Calculate the start and end index for pagination.
 
     Args:
-        page (int): The current page number (1-indexed).
-        page_size (int): The number of items per page.
+        page (int): The page number (1-indexed)
+        page_size (int): The number of items per page
 
     Returns:
-        tuple: A tuple containing the start index (inclusive)
-               and end index (exclusive) corresponding to the page.
+        tuple: A tuple containing the start index and end index
+
+    Example:
+        >>> index_range(1, 7)
+        (0, 7)
+        >>> index_range(3, 15)
+        (30, 45)
     """
     start_index = (page - 1) * page_size
     end_index = start_index + page_size
+    return (start_index, end_index)
 
-    return start_index, end_index
 
 class Server:
     """Server class to paginate a database of popular baby names.
@@ -60,7 +65,7 @@ class Server:
         start_index, end_index = index_range(page, page_size)
         return all_data[start_index:end_index]
 
-    def get_hyper(self, page: int = 1, page_size = 10) -> Dict:
+    def get_hyper(self, page: int = 1, page_size: int = 10) -> Dict:
         """
         Get a page of the dataset with hypermedia information.
 
@@ -80,7 +85,7 @@ class Server:
         """
         total_pages = math.ceil(len(self.dataset()) / page_size)
         data = self.get_page(page, page_size)
-    
+
         if page > 1:
             prev_page = page - 1
         else:
@@ -91,7 +96,7 @@ class Server:
         else:
             next_page = None
 
-        return{
+        return {
             'page_size': len(data),
             'page': page,
             'data': data,
@@ -99,4 +104,3 @@ class Server:
             'prev_page': prev_page,
             'total_pages': total_pages
         }
-
